@@ -130,6 +130,32 @@ jscut.priv.cam = jscut.priv.cam || {};
         return mergePaths(bounds, allPaths);
     };
 
+    // Generate coil from geometry.
+    jscut.priv.cam.coil = function (geometry, diameter) {
+        let wire_gap = diameter / 2;
+        let coil_n = 5;
+
+        let current = jscut.priv.path.offset(geometry, 0);
+        let bounds = current.slice(0);
+
+        let allPaths = [];
+        for (let loops = 0; loops < coil_n; ++loops) {
+            allPaths = current.concat(allPaths);
+            current = jscut.priv.path.offset(current, -wire_gap);
+        }
+
+        allPaths = allPaths.reverse();
+
+        allPaths.forEach(p => {
+           console.log(typeof p, p);
+        });
+
+        let result = mergePaths(bounds, allPaths);
+        console.log(result);
+
+        return result;
+    };
+
     // Compute paths for pocket operation on Clipper geometry. Returns array
     // of CamPath. cutterDia is in Clipper units. overlap is in the range [0, 1).
     jscut.priv.cam.hspocket = function (geometry, cutterDia, overlap, climb) {
@@ -163,7 +189,7 @@ jscut.priv.cam = jscut.priv.cam || {};
     };
 
     // Compute paths for outline operation on Clipper geometry. Returns array
-    // of CamPath. cutterDia and width are in Clipper units. overlap is in the 
+    // of CamPath. cutterDia and width are in Clipper units. overlap is in the
     // range [0, 1).
     jscut.priv.cam.outline = function (geometry, cutterDia, isInside, width, overlap, climb) {
         var currentWidth = cutterDia;

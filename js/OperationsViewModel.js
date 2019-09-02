@@ -105,7 +105,8 @@ function Operation(miscViewModel, options, svgViewModel, materialViewModel, oper
     self.enabled = ko.observable(true);
     self.ramp = ko.observable(false);
     self.combineOp = ko.observable("Union");
-    self.camOp = ko.observable("Pocket");
+    self.camOp = ko.observable("Coil");
+    self.camOp = ko.observable("Coil");
     self.direction = ko.observable("Conventional");
     self.cutDepth = ko.observable(0);
     self.margin = ko.observable("0.0");
@@ -258,6 +259,9 @@ function Operation(miscViewModel, options, svgViewModel, materialViewModel, oper
 
         if (self.camOp() == "Pocket")
             self.toolPaths(jscut.priv.cam.pocket(geometry, toolCamArgs.diameterClipper, 1 - toolCamArgs.stepover, self.direction() == "Climb"));
+        else if (self.camOp() === "Coil") {
+            self.toolPaths(jscut.priv.cam.coil(geometry, toolCamArgs.diameterClipper));
+        }
         else if (self.camOp() == "V Pocket")
             self.toolPaths(jscut.priv.cam.vPocket(geometry, toolModel.angle(), toolCamArgs.passDepthClipper, self.cutDepth.toInch() * jscut.priv.path.inchToClipperScale, toolCamArgs.stepover, self.direction() == "Climb"));
         else if (self.camOp() == "Inside" || self.camOp() == "Outside") {
