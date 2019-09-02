@@ -132,28 +132,40 @@ jscut.priv.cam = jscut.priv.cam || {};
 
     // Generate coil from geometry.
     jscut.priv.cam.coil = function (geometry, diameter) {
-        let wire_gap = diameter / 2;
-        let coil_n = 5;
+        let wire_gap = - (diameter / 2);
+        let coil_n = 3;
 
         let current = jscut.priv.path.offset(geometry, 0);
         let bounds = current.slice(0);
 
         let allPaths = [];
-        for (let loops = 0; loops < coil_n; ++loops) {
+        for (let loops = 0; loops < coil_n + 1; ++loops) {
             allPaths = current.concat(allPaths);
-            current = jscut.priv.path.offset(current, -wire_gap);
+            current = jscut.priv.path.offset(current, wire_gap);
         }
 
         allPaths = allPaths.reverse();
 
-        allPaths.forEach(p => {
-           console.log(typeof p, p);
-        });
+        let res = [];
+        for (let i = 0; i < allPaths.length - 1; ++i) {
+            for (let j = 0; j < allPaths[i].length; ++j) {
+                res.push(allPaths[i][j]);
+            }
+        }
+        let last_path = allPaths[allPaths.length - 1];
+        res.push(last_path[0]);
 
-        let result = mergePaths(bounds, allPaths);
-        console.log(result);
+        let output = [
+            {
+                path: res,
+                safeToClose: false,
+            }
+        ];
 
-        return result;
+        // let result = mergePaths(bounds, allPaths);
+
+        // return result;
+        return output;
     };
 
     // Compute paths for pocket operation on Clipper geometry. Returns array
