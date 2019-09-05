@@ -87,7 +87,7 @@ jscut.priv.path = jscut.priv.path || {};
         return result;
     };
 
-    // Get a linear path from an element in snap.svg's format. Calls alertFn with an 
+    // Get a linear path from an element in snap.svg's format. Calls alertFn with an
     // error message and returns null if there's a problem. Returns null without calling
     // alertFn if element.type == "svg".
     jscut.priv.path.getLinearSnapPathFromElement = function (element, minNumSegments, minSegmentLength, alertFn) {
