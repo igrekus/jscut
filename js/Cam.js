@@ -136,7 +136,7 @@ jscut.priv.cam = jscut.priv.cam || {};
         let coil_n = 3;
 
         let current = jscut.priv.path.offset(geometry, 0);
-        let bounds = current.slice(0);
+        let allPaths = [];
 
         let allPaths = [];
         for (let loops = 0; loops < coil_n + 1; ++loops) {
