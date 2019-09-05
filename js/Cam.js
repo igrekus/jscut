@@ -133,15 +133,17 @@ jscut.priv.cam = jscut.priv.cam || {};
     // Generate coil from geometry.
     jscut.priv.cam.coil = function (geometry, diameter) {
         let wire_gap = - (diameter / 2);
-        let coil_n = 3;
+        let coil_n = 2;
 
         let current = jscut.priv.path.offset(geometry, 0);
         let allPaths = [];
 
-        let allPaths = [];
+        console.log('geometry', geometry);
+        console.log('current start', current);
         for (let loops = 0; loops < coil_n + 1; ++loops) {
             allPaths = current.concat(allPaths);
             current = jscut.priv.path.offset(current, wire_gap);
+            console.log('current', loops, current);
         }
 
         allPaths = allPaths.reverse();
