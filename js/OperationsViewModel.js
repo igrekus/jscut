@@ -200,7 +200,7 @@ function Operation(miscViewModel, options, svgViewModel, materialViewModel, oper
 
         if (previewGeometry.length != 0) {
             var offset = self.margin.toInch() * jscut.priv.path.inchToClipperScale;
-            if (self.camOp() == "Pocket" || self.camOp() == "V Pocket" || self.camOp() == "Inside")
+            if (self.camOp() == "Pocket" || self.camOp() == "V Pocket" || self.camOp() == "Inside" || self.camOp() == "Coil")
                 offset = -offset;
             if (self.camOp() != "Engrave" && offset != 0)
                 previewGeometry = jscut.priv.path.offset(previewGeometry, offset);
