@@ -19,13 +19,14 @@ function ToolModel() {
     var self = this;
     self.units = ko.observable("inch");
     self.unitConverter = new UnitConverter(self.units);
-    self.diameter = ko.observable(.125);
+    self.diameter = ko.observable(0.039372);
     self.angle = ko.observable(180);
     self.passDepth = ko.observable(.125);
     self.stepover = ko.observable(.4);
     self.rapidRate = ko.observable(100);
     self.plungeRate = ko.observable(5);
     self.cutRate = ko.observable(40);
+    self.loopCount = ko.observable(2);
 
     self.unitConverter.add(self.diameter);
     self.unitConverter.add(self.passDepth);
@@ -43,6 +44,7 @@ function ToolModel() {
             diameterClipper: self.diameter.toInch() * jscut.priv.path.inchToClipperScale,
             passDepthClipper: self.passDepth.toInch() * jscut.priv.path.inchToClipperScale,
             stepover: Number(self.stepover()),
+            loopCount: Number(self.loopCount),
         };
         if (result.diameterClipper <= 0) {
             showAlert("Tool diameter must be greater than 0", "alert-danger");
@@ -69,6 +71,7 @@ function ToolModel() {
             'rapidRate': self.rapidRate(),
             'plungeRate': self.plungeRate(),
             'cutRate': self.cutRate(),
+            'loopCount': self.loopCount(),
         };
     }
 
@@ -89,6 +92,7 @@ function ToolModel() {
             f(json.rapidRate, self.rapidRate);
             f(json.plungeRate, self.plungeRate);
             f(json.cutRate, self.cutRate);
+            f(json.loopCount, self.loopCount);
         }
     }
 }
@@ -106,9 +110,9 @@ function Operation(miscViewModel, options, svgViewModel, materialViewModel, oper
     self.ramp = ko.observable(false);
     self.combineOp = ko.observable("Union");
     self.camOp = ko.observable("Coil");
-    self.camOp = ko.observable("Coil");
     self.direction = ko.observable("Conventional");
     self.cutDepth = ko.observable(0);
+    self.loopCount = ko.observable(2);
     self.margin = ko.observable("0.0");
     self.width = ko.observable("0.0");
     self.combinedGeometry = [];
@@ -260,7 +264,10 @@ function Operation(miscViewModel, options, svgViewModel, materialViewModel, oper
         if (self.camOp() == "Pocket")
             self.toolPaths(jscut.priv.cam.pocket(geometry, toolCamArgs.diameterClipper, 1 - toolCamArgs.stepover, self.direction() == "Climb"));
         else if (self.camOp() === "Coil") {
-            self.toolPaths(jscut.priv.cam.coil(geometry, toolCamArgs.diameterClipper));
+            // TODO hack use observable to get loopcount value
+            const el = $('#loopCount');
+            const loopCount = Number(el.val());
+            self.toolPaths(jscut.priv.cam.coil(geometry, toolCamArgs.diameterClipper, loopCount));
         }
         else if (self.camOp() == "V Pocket")
             self.toolPaths(jscut.priv.cam.vPocket(geometry, toolModel.angle(), toolCamArgs.passDepthClipper, self.cutDepth.toInch() * jscut.priv.path.inchToClipperScale, toolCamArgs.stepover, self.direction() == "Climb"));
