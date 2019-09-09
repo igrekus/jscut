@@ -267,7 +267,10 @@ function Operation(miscViewModel, options, svgViewModel, materialViewModel, oper
             // TODO hack use observable to get loopcount value
             const el = $('#loopCount');
             const loopCount = Number(el.val());
-            self.toolPaths(jscut.priv.cam.coil(geometry, toolCamArgs.diameterClipper, loopCount));
+            const out_geom = jscut.priv.cam.coil(geometry, toolCamArgs.diameterClipper, loopCount)
+            self.toolPaths(out_geom);
+
+            self.calcResult(out_geom);
         }
         else if (self.camOp() == "V Pocket")
             self.toolPaths(jscut.priv.cam.vPocket(geometry, toolModel.angle(), toolCamArgs.passDepthClipper, self.cutDepth.toInch() * jscut.priv.path.inchToClipperScale, toolCamArgs.stepover, self.direction() == "Climb"));
@@ -365,6 +368,27 @@ function Operation(miscViewModel, options, svgViewModel, materialViewModel, oper
             f(json.enabled, self.enabled);
         }
     }
+
+    self.calcResult = function (geometry) {
+        const res = geometry[0].path;
+
+        let length = 0;
+        let current_x = res[0].X;
+        let current_y = res[0].Y;
+
+        for (let i = 1; i < res.length; ++i) {
+            let {X, Y} = res[i];
+            let l = Math.sqrt(Math.pow(X - current_x, 2) + Math.pow(Y - current_y, 2));
+            length += l;
+
+            current_x = X;
+            current_y = Y;
+        }
+
+        length = (length / jscut.priv.path.inchToClipperScale * 25.4).toFixed(1);
+        $('#coilLength').val(length);
+    }
+
 }
 
 function OperationsViewModel(miscViewModel, options, svgViewModel, materialViewModel, selectionViewModel, toolModel, combinedGeometryGroup, toolPathsGroup, toolPathsChanged) {
