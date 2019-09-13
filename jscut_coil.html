@@ -342,7 +342,7 @@ along with jscut.  If not, see <http://www.gnu.org/licenses/>.
                 <div class="panel panel-default" id="Tool">
                     <div class="panel-heading">
                         <h3 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTool">Параметры контура</a>
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseTool">Задаваемые параметры контура</a>
                         </h3>
                     </div>
                     <div id="collapseTool" class="panel-collapse collapse in">
@@ -352,7 +352,7 @@ along with jscut.  If not, see <http://www.gnu.org/licenses/>.
                                     <td><label for="toolUnits" class="control-label">Units</label>
                                     <td><select id="toolUnits" data-bind="value: units"><option>inch<option>mm</select>
                                 <tr>
-                                    <td><label for="toolDiameter" class="control-label">d=</label>
+                                    <td><label for="toolDiameter" class="control-label">Зазор</label>
                                     <td><span data-bind="text: units"></span>
                                     <td><input id="toolDiameter" type="number" step="any" data-bind="value: diameter">
                                 <tr class="hide-control">
@@ -380,9 +380,17 @@ along with jscut.  If not, see <http://www.gnu.org/licenses/>.
                                     <td><span data-bind="text: units"></span>/min
                                     <td><input id="toolCutRate" type="number" step="any" data-bind="value: cutRate">
                                 <tr>
-                                    <td><label for="loopCount" class="control-label">n=</label>
+                                    <td><label for="loopCount" class="control-label">Кол-во витков</label>
                                     <td><span>шт</span>
                                     <td><input id="loopCount" type="number" step="any" data-bind="value: loopCount">
+                                <tr>
+                                    <td><label for="wireDiameter" class="control-label">Диаметр проводника</label>
+                                    <td><span>mm</span>
+                                    <td><input id="wireDiameter" type="number" step="any" data-bind="value: wireDiameter">
+                                <tr>
+                                    <td><label for="wireDiameter" class="control-label">Диэлектрическая проницаемость</label>
+                                    <td><span>mm</span>
+                                    <td><input id="wireDiameter" type="number" step="any" data-bind="value: wireDiameter">
                             </table>
                         </div>
                     </div>
@@ -391,20 +399,35 @@ along with jscut.  If not, see <http://www.gnu.org/licenses/>.
                 <div class="panel panel-default" id="coilResult">
                     <div class="panel-heading">
                         <h3 class="panel-title">
-                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseCoilResult">Параметры контура</a>
+                            <a data-toggle="collapse" data-parent="#accordion" href="#collapseCoilResult">Расчётные параметры контура</a>
                         </h3>
                     </div>
                     <div id="collapseCoilResult" class="panel-collapse collapse in">
                         <div class="panel-body">
                             <table class="table">
                                 <tr>
-                                    <td><label for="coilLength" class="control-label">L=</label></td>
+                                    <td><label for="coilLength" class="control-label">Длина</label></td>
                                     <td><span>mm</span></td>
                                     <td><input id="coilLength" type="text" readonly value="0"></td>
                                 </tr>
                                 <tr>
-                                    <td><label for="coilArea" class="control-label">Sм</label></td>
-                                    <td><span>mm</span></td>
+                                    <td><label for="coilCapacitance" class="control-label">Ёмкость</label></td>
+                                    <td><span>пФ</span></td>
+                                    <td><input id="coilCapacitance" type="text" readonly value="0"></td>
+                                </tr>
+                                <tr>
+                                    <td><label for="coilInductance" class="control-label">Индуктивность</label></td>
+                                    <td><span>мГн</span></td>
+                                    <td><input id="coilInductance" type="text" readonly value="0"></td>
+                                </tr>
+                                <tr>
+                                    <td><label for="coilFreq" class="control-label">Частота</label></td>
+                                    <td><span>МГц</span></td>
+                                    <td><input id="coilFreq" type="text" readonly value="0"></td>
+                                </tr>
+                                <tr>
+                                    <td><label for="coilArea" class="control-label">Площадь</label></td>
+                                    <td><span>mm<sup>2</sup></span></td>
                                     <td><input id="coilArea" type="text" readonly value="0"></td>
                                 </tr>
                             </table>
