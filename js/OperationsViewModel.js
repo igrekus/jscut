@@ -268,8 +268,12 @@ function Operation(miscViewModel, options, svgViewModel, materialViewModel, oper
             // TODO hack use observable to get loopcount value
             const el = $('#loopCount');
             const loopCount = Number(el.val());
-            const out_geom = jscut.priv.cam.coil(geometry, toolCamArgs.diameterClipper, loopCount)
+            const out_geom = jscut.priv.cam.coil(geometry, toolCamArgs.diameterClipper, loopCount);
+
             self.toolPaths(out_geom);
+
+            const wireDiameter = $('#wireDiameter');
+            console.log(wireDiameter);
 
             self.calcResult(out_geom);
         }
