@@ -27,6 +27,7 @@ function ToolModel() {
     self.plungeRate = ko.observable(5);
     self.cutRate = ko.observable(40);
     self.loopCount = ko.observable(2);
+    self.wireDiameter = ko.observable(0.5);
 
     self.unitConverter.add(self.diameter);
     self.unitConverter.add(self.passDepth);
