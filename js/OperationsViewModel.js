@@ -286,11 +286,12 @@ function Operation(miscViewModel, options, svgViewModel, materialViewModel, oper
             const out_geom = jscut.priv.cam.coil(geometry, wireGap, loopCount);
             self.toolPaths(out_geom);
 
-            const {length, capacitance, inductance} = self.calcResult(out_geom, wireDiameter, wireGap, dielectricConst, magneticConst);
+            const {length, capacitance, inductance, freq} = self.calcResult(out_geom, wireDiameter, wireGap, dielectricConst, magneticConst);
 
             $('#coilLength').val(length);
             $('#coilCapacitance').val(capacitance);
             $('#coilInductance').val(inductance);
+            $('#coilFreq').val(freq);
 
         }
         else if (self.camOp() == "V Pocket")
@@ -417,10 +418,13 @@ function Operation(miscViewModel, options, svgViewModel, materialViewModel, oper
 
         const inductance = ((magneticConst * length)/Math.PI) * Math.log1p((wireGap /2) / (wireDiameter / 2));
 
+        const freq = 1 / (2 * Math.PI * Math.sqrt(inductance * capacitance));
+
         return {
             length: length,
             capacitance: capacitance,
-            inductance: inductance
+            inductance: inductance,
+            freq: freq
         };
     }
 
