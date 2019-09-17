@@ -28,6 +28,8 @@ function ToolModel() {
     self.cutRate = ko.observable(40);
     self.loopCount = ko.observable(2);
     self.wireDiameter = ko.observable(0.5);
+    self.dielectricConst = ko.observable(1);
+    self.magneticConst = ko.observable(1.5);
 
     self.unitConverter.add(self.diameter);
     self.unitConverter.add(self.passDepth);
