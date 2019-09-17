@@ -306,17 +306,24 @@ function popoverHover(obj, placement, content) {
     });
 }
 
-popoverHover('#pxPerInch', "bottom", "SVG editors use different scales from each other; set this to allow sizes come out correctly.<br><br><table><tr><td>Inkscape 0.9x:<td>96<tr><td>Inkscape 0.4x:<td>90<tr><td>Adobe Illustrator:<td>72<tr><td>CorelDRAW:<td>96</table>");
+popoverHover('#pxPerInch', "bottom", "DPI для исходного файла, зависит от редактора:<br><br><table><tr><td>Inkscape 0.9x:<td>96<tr><td>Inkscape 0.4x:<td>90<tr><td>Adobe Illustrator:<td>72<tr><td>CorelDRAW:<td>96</table>");
 
 popoverHover('#tabsMaxCutDepth', "right", "Maximum depth operations may cut when they pass over tabs");
 
-popoverHover('#toolDiameter', "right", "Diameter of tool. V Pocket ignores this. Simulate GCODE also ignores Diameter if Angle < 180.");
+popoverHover('#toolDiameter', "right", "Расстояние между витакми");
 popoverHover('#toolAngle', "right", "Angle of V cutter. 180 for normal (flat bottom) tools. V Pocket is the only operation which obeys this. Simulate GCODE always obeys it.");
 popoverHover('#toolPassDepth', "right", "Maximum depth the tool should plunge each pass. Use a smaller pass depth for harder materials and better quality.");
 popoverHover('#toolStepOver', "right", "What fraction of the tool diameter the tool should step over each time around a loop. Smaller values produce better cuts and reduce tool wear, but take longer to complete.");
 popoverHover('#toolRapidRate', "right", "The speed the tool moves while not cutting");
 popoverHover('#toolPlungeRate', "right", "The speed the tool plunges downwards into the material");
 popoverHover('#toolCutRate', "right", "The speed the tool moves horizontally during cutting");
+popoverHover('#loopCount', "right", "Количество витков");
+popoverHover('#wireDiameter', 'right', 'Диаметр проводника');
+
+popoverHover('#coilLength', 'right', 'Длина проводника');
+popoverHover('#coilArea', 'right', 'Площадь контура');
+popoverHover('#coilCapacitance', 'right', 'Емкость контура');
+popoverHover('#coilInductance', 'right', 'Идуктивность контура');
 
 popoverHover('#inputMatThickness', "top", "How thick is the material");
 popoverHover('#selectMatZOrigin', "top", "What is considered the 0 Z position");
@@ -325,20 +332,20 @@ popoverHover('#inputMatClearance', "top", "How high the tool moves over the mate
 popoverHover('#inputSelMinNumSegments', "top", "Minimum number of line segments to convert a curve to. jscut does this conversion when you select an object (it becomes blue).");
 popoverHover('#inputSelMinSegmentLength', "top", "Minimum length of each line segment when converting curves. jscut does this conversion when you select an object (it becomes blue).");
 
-popoverHover('#gcodeZeroLowerLeft', "top", "Changes the X and Y Offset values so that 0,0 is at the lower-left corner of all tool paths.");
-popoverHover('#gcodeZeroCenter', "top", "Changes the X and Y Offset values so that 0,0 is at the center of all tool paths.");
-popoverHover('#gcodeReturn00', "top", "Move the tool to 0,0 after the last operation.");
-popoverHover('#gcodeOffsetX', "top", "Amount to add to gcode X coordinates");
-popoverHover('#gcodeOffsetY', "top", "Amount to add to gcode Y coordinates");
-popoverHover('#gcodeMinX', "top", "Minimum X coordinate in gcode. If this is out of range of your machine then adjust X Offset.");
-popoverHover('#gcodeMaxX', "top", "Maximum X coordinate in gcode. If this is out of range of your machine then adjust X Offset.");
-popoverHover('#gcodeMinY', "top", "Minimum Y coordinate in gcode. If this is out of range of your machine then adjust Y Offset.");
-popoverHover('#gcodeMaxY', "top", "Maximum Y coordinate in gcode. If this is out of range of your machine then adjust Y Offset.");
+popoverHover('#gcodeZeroLowerLeft', "top", "Установить Сдвиг по X и Y так, чтобьы 0,0 оказалась слева-снизу от всего контура");
+popoverHover('#gcodeZeroCenter', "top", "Установить Сдвиг по X и Y так, чтобьы 0,0 оказалась в центре контура");
+popoverHover('#gcodeReturn00', "top", "Вернуть инструмент в 0,0 после завершения программы");
+popoverHover('#gcodeOffsetX', "top", "Смещение всего контура по X");
+popoverHover('#gcodeOffsetY', "top", "Смещение всего контура по Y");
+popoverHover('#gcodeMinX', "top", "Минимальная координата контура по X. Если вышло за пределы рабочего поля машины, добавить Сдвиг по X");
+popoverHover('#gcodeMaxX', "top", "Максимальная координата контура по X. Если вышло за пределы рабочего поля машины, добавить Сдвиг по X");
+popoverHover('#gcodeMinY', "top", "Минимальная координата контура по Y. Если вышло за пределы рабочего поля машины, добавить Сдвиг по Y");
+popoverHover('#gcodeMaxY', "top", "Максимальная координата контура по Y. Если вышло за пределы рабочего поля машины, добавить Сдвиг по Y");
 
 var operationPopovers = {
     opEnabled: ['top', 'Whether this operation is enabled'],
-    opOperation: ['top', 'What operation type to perform'],
-    opGenerate: ['top', 'Generate toolpath for operation'],
+    opOperation: ['top', 'Тип операции'],
+    opGenerate: ['top', 'Рассчитать траекторию инструмента для выбранной операции'],
     opShowDetail: ['top', 'Show additional detail'],
     opName: ['right', 'Name used in gcode comments'],
     opRamp: ['right', 'Ramp the cutter in gradually instead of plunging straight down'],
@@ -378,7 +385,7 @@ function hookupTabPopovers(nodes) {
 $('#createOperationButton').popover({
     trigger: "manual",
     html: true,
-    content: "<p class='bg-danger'>Select 1 or more objects in the \"Edit Toolpaths\" tab before clicking here</p>",
+    content: "<p class='bg-danger'>Выберите контур, для которого необходимо построить спираль.</p>",
     container: "body",
     placement: "right"
 });

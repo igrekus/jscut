@@ -130,6 +130,49 @@ jscut.priv.cam = jscut.priv.cam || {};
         return mergePaths(bounds, allPaths);
     };
 
+    // Generate coil from geometry.
+    jscut.priv.cam.coil = function (geometry, wireGap, loopCount) {
+        // let wire_gap = - (diameter / 2);
+        let wire_gap = - wireGap;
+        let coil_n = loopCount;
+
+        let current = jscut.priv.path.offset(geometry, 0);
+
+        // TODO calc poly area:
+        // https://github.com/Doodle3D/clipper-js
+        let area = new ClipperLib.JS.AreaOfPolygon(current);
+
+        let allPaths = [];
+
+        for (let loops = 0; loops < coil_n + 1; ++loops) {
+            allPaths = current.concat(allPaths);
+            current = jscut.priv.path.offset(current, wire_gap);
+        }
+
+        allPaths = allPaths.reverse();
+
+        let res = [];
+        for (let i = 0; i < allPaths.length - 1; ++i) {
+            for (let j = 0; j < allPaths[i].length; ++j) {
+                res.push(allPaths[i][j]);
+            }
+        }
+        let last_path = allPaths[allPaths.length - 1];
+        res.push(last_path[0]);
+
+        let output = [
+            {
+                path: res,
+                safeToClose: false,
+            }
+        ];
+
+        // let result = mergePaths(bounds, allPaths);
+
+        // return result;
+        return output;
+    };
+
     // Compute paths for pocket operation on Clipper geometry. Returns array
     // of CamPath. cutterDia is in Clipper units. overlap is in the range [0, 1).
     jscut.priv.cam.hspocket = function (geometry, cutterDia, overlap, climb) {
@@ -163,7 +206,7 @@ jscut.priv.cam = jscut.priv.cam || {};
     };
 
     // Compute paths for outline operation on Clipper geometry. Returns array
-    // of CamPath. cutterDia and width are in Clipper units. overlap is in the 
+    // of CamPath. cutterDia and width are in Clipper units. overlap is in the
     // range [0, 1).
     jscut.priv.cam.outline = function (geometry, cutterDia, isInside, width, overlap, climb) {
         var currentWidth = cutterDia;

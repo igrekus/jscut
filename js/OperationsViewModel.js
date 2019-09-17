@@ -19,13 +19,17 @@ function ToolModel() {
     var self = this;
     self.units = ko.observable("inch");
     self.unitConverter = new UnitConverter(self.units);
-    self.diameter = ko.observable(.125);
+    self.diameter = ko.observable(0.039372);
     self.angle = ko.observable(180);
     self.passDepth = ko.observable(.125);
     self.stepover = ko.observable(.4);
     self.rapidRate = ko.observable(100);
     self.plungeRate = ko.observable(5);
     self.cutRate = ko.observable(40);
+    self.loopCount = ko.observable(2);
+    self.wireDiameter = ko.observable(0.5);
+    self.dielectricConst = ko.observable(1);
+    self.magneticConst = ko.observable(1.5);
 
     self.unitConverter.add(self.diameter);
     self.unitConverter.add(self.passDepth);
@@ -43,6 +47,7 @@ function ToolModel() {
             diameterClipper: self.diameter.toInch() * jscut.priv.path.inchToClipperScale,
             passDepthClipper: self.passDepth.toInch() * jscut.priv.path.inchToClipperScale,
             stepover: Number(self.stepover()),
+            loopCount: Number(self.loopCount),
         };
         if (result.diameterClipper <= 0) {
             showAlert("Tool diameter must be greater than 0", "alert-danger");
@@ -69,6 +74,7 @@ function ToolModel() {
             'rapidRate': self.rapidRate(),
             'plungeRate': self.plungeRate(),
             'cutRate': self.cutRate(),
+            'loopCount': self.loopCount(),
         };
     }
 
@@ -89,6 +95,7 @@ function ToolModel() {
             f(json.rapidRate, self.rapidRate);
             f(json.plungeRate, self.plungeRate);
             f(json.cutRate, self.cutRate);
+            f(json.loopCount, self.loopCount);
         }
     }
 }
@@ -105,9 +112,10 @@ function Operation(miscViewModel, options, svgViewModel, materialViewModel, oper
     self.enabled = ko.observable(true);
     self.ramp = ko.observable(false);
     self.combineOp = ko.observable("Union");
-    self.camOp = ko.observable("Pocket");
+    self.camOp = ko.observable("Coil");
     self.direction = ko.observable("Conventional");
     self.cutDepth = ko.observable(0);
+    self.loopCount = ko.observable(2);
     self.margin = ko.observable("0.0");
     self.width = ko.observable("0.0");
     self.combinedGeometry = [];
@@ -199,7 +207,7 @@ function Operation(miscViewModel, options, svgViewModel, materialViewModel, oper
 
         if (previewGeometry.length != 0) {
             var offset = self.margin.toInch() * jscut.priv.path.inchToClipperScale;
-            if (self.camOp() == "Pocket" || self.camOp() == "V Pocket" || self.camOp() == "Inside")
+            if (self.camOp() == "Pocket" || self.camOp() == "V Pocket" || self.camOp() == "Inside" || self.camOp() == "Coil")
                 offset = -offset;
             if (self.camOp() != "Engrave" && offset != 0)
                 previewGeometry = jscut.priv.path.offset(previewGeometry, offset);
@@ -258,6 +266,33 @@ function Operation(miscViewModel, options, svgViewModel, materialViewModel, oper
 
         if (self.camOp() == "Pocket")
             self.toolPaths(jscut.priv.cam.pocket(geometry, toolCamArgs.diameterClipper, 1 - toolCamArgs.stepover, self.direction() == "Climb"));
+
+        else if (self.camOp() === "Coil") {
+            // TODO hack use observable to get loopcount value
+            const wireGap = toolCamArgs.diameterClipper;
+
+            const loopEl = $('#loopCount');
+            const loopCount = Number(loopEl.val());
+
+            const wdEl = $('#wireDiameter');
+            const wireDiameter = Number(wdEl.val());
+
+            const dcEl = $('#dielectricConst');
+            const dielectricConst = Number(dcEl.val());
+
+            const mcEl = $('#magneticConst');
+            const magneticConst = Number(mcEl.val());
+
+            const out_geom = jscut.priv.cam.coil(geometry, wireGap, loopCount);
+            self.toolPaths(out_geom);
+
+            const {length, capacitance, inductance} = self.calcResult(out_geom, wireDiameter, wireGap, dielectricConst, magneticConst);
+
+            $('#coilLength').val(length);
+            $('#coilCapacitance').val(capacitance);
+            $('#coilInductance').val(inductance);
+
+        }
         else if (self.camOp() == "V Pocket")
             self.toolPaths(jscut.priv.cam.vPocket(geometry, toolModel.angle(), toolCamArgs.passDepthClipper, self.cutDepth.toInch() * jscut.priv.path.inchToClipperScale, toolCamArgs.stepover, self.direction() == "Climb"));
         else if (self.camOp() == "Inside" || self.camOp() == "Outside") {
@@ -354,6 +389,41 @@ function Operation(miscViewModel, options, svgViewModel, materialViewModel, oper
             f(json.enabled, self.enabled);
         }
     }
+
+    self.calcResult = function (...args) {
+        const [geometry, wireDiameter, wireGap, dielectricConst, magneticConst] = args;
+
+        const res = geometry[0].path;
+
+        let length = 0;
+        let current_x = res[0].X;
+        let current_y = res[0].Y;
+
+        for (let i = 1; i < res.length; ++i) {
+            let {X, Y} = res[i];
+            let l = Math.sqrt(Math.pow(X - current_x, 2) + Math.pow(Y - current_y, 2));
+            length += l;
+
+            current_x = X;
+            current_y = Y;
+        }
+
+        length = (length / jscut.priv.path.inchToClipperScale * 25.4).toFixed(1);
+
+        const capacitance =
+            (Math.PI * dielectricConst * length) /
+            (Math.log1p((wireGap - wireDiameter)
+                / wireDiameter));
+
+        const inductance = ((magneticConst * length)/Math.PI) * Math.log1p((wireGap /2) / (wireDiameter / 2));
+
+        return {
+            length: length,
+            capacitance: capacitance,
+            inductance: inductance
+        };
+    }
+
 }
 
 function OperationsViewModel(miscViewModel, options, svgViewModel, materialViewModel, selectionViewModel, toolModel, combinedGeometryGroup, toolPathsGroup, toolPathsChanged) {
