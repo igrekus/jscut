@@ -266,18 +266,32 @@ function Operation(miscViewModel, options, svgViewModel, materialViewModel, oper
 
         if (self.camOp() == "Pocket")
             self.toolPaths(jscut.priv.cam.pocket(geometry, toolCamArgs.diameterClipper, 1 - toolCamArgs.stepover, self.direction() == "Climb"));
+
         else if (self.camOp() === "Coil") {
             // TODO hack use observable to get loopcount value
-            const el = $('#loopCount');
-            const loopCount = Number(el.val());
-            const out_geom = jscut.priv.cam.coil(geometry, toolCamArgs.diameterClipper, loopCount);
+            const wireGap = toolCamArgs.diameterClipper;
 
+            const loopEl = $('#loopCount');
+            const loopCount = Number(loopEl.val());
+
+            const wdEl = $('#wireDiameter');
+            const wireDiameter = Number(wdEl.val());
+
+            const dcEl = $('#dielectricConst');
+            const dielectricConst = Number(dcEl.val());
+
+            const mcEl = $('#magneticConst');
+            const magneticConst = Number(mcEl.val());
+
+            const out_geom = jscut.priv.cam.coil(geometry, wireGap, loopCount);
             self.toolPaths(out_geom);
 
-            const wireDiameter = $('#wireDiameter');
-            console.log(wireDiameter);
+            const {length, capacitance, inductance} = self.calcResult(out_geom, wireDiameter, wireGap, dielectricConst, magneticConst);
 
-            self.calcResult(out_geom);
+            $('#coilLength').val(length);
+            $('#coilCapacitance').val(capacitance);
+            $('#coilInductance').val(inductance);
+
         }
         else if (self.camOp() == "V Pocket")
             self.toolPaths(jscut.priv.cam.vPocket(geometry, toolModel.angle(), toolCamArgs.passDepthClipper, self.cutDepth.toInch() * jscut.priv.path.inchToClipperScale, toolCamArgs.stepover, self.direction() == "Climb"));
@@ -376,7 +390,9 @@ function Operation(miscViewModel, options, svgViewModel, materialViewModel, oper
         }
     }
 
-    self.calcResult = function (geometry) {
+    self.calcResult = function (...args) {
+        const [geometry, wireDiameter, wireGap, dielectricConst, magneticConst] = args;
+
         const res = geometry[0].path;
 
         let length = 0;
@@ -393,7 +409,19 @@ function Operation(miscViewModel, options, svgViewModel, materialViewModel, oper
         }
 
         length = (length / jscut.priv.path.inchToClipperScale * 25.4).toFixed(1);
-        $('#coilLength').val(length);
+
+        const capacitance =
+            (Math.PI * dielectricConst * length) /
+            (Math.log1p((wireGap - wireDiameter)
+                / wireDiameter));
+
+        const inductance = ((magneticConst * length)/Math.PI) * Math.log1p((wireGap /2) / (wireDiameter / 2));
+
+        return {
+            length: length,
+            capacitance: capacitance,
+            inductance: inductance
+        };
     }
 
 }
