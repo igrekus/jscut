@@ -141,16 +141,12 @@ jscut.priv.cam = jscut.priv.cam || {};
         // TODO calc poly area:
         // https://github.com/Doodle3D/clipper-js
         let area = new ClipperLib.JS.AreaOfPolygon(current);
-        console.log('area', area);
 
         let allPaths = [];
 
-        console.log('geometry', geometry);
-        console.log('current start', current);
         for (let loops = 0; loops < coil_n + 1; ++loops) {
             allPaths = current.concat(allPaths);
             current = jscut.priv.path.offset(current, wire_gap);
-            console.log('current', loops, current);
         }
 
         allPaths = allPaths.reverse();
