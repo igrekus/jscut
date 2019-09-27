@@ -588,8 +588,8 @@ along with jscut.  If not, see <http://www.gnu.org/licenses/>.
                             <div class="form-horizontal">
                                 <table class="table">
                                     <tr>
-                                        <td><label class="control-label">Единица измерения</label>
-                                        <td><select data-bind="value: units"><option>inch<option>mm</select>
+                                        <td><label for="selectToolUnits" class="control-label">Единица измерения</label>
+                                        <td><select id="selectToolUnits" data-bind="value: units"><option>inch<option>mm</select>
                                     <tr>
                                         <td>
                                         <td colspan="2"><a id="gcodeZeroLowerLeft" href="#" data-bind="click: zeroLowerLeft">0,0 внизу-слева</a>
@@ -601,16 +601,16 @@ along with jscut.  If not, see <http://www.gnu.org/licenses/>.
                                         <td><input id="gcodeReturn00" type="checkbox" data-bind="checked: returnTo00" />
                                     <tr>
                                         <td><label for="gcodeOffsetX">Сдвиг по X</label>
-                                        <td><span data-bind="text: units" />
+                                        <td><span data-bind="text: units"></span>
                                         <td><input type="number" step="any" id="gcodeOffsetX" data-bind="value: offsetX">
                                     <tr>
                                         <td><label for="gcodeOffsetY">Сдвиг по Y</label>
-                                        <td><span data-bind="text: units" />
+                                        <td><span data-bind="text: units"></span>
                                         <td><input type="number" step="any" id="gcodeOffsetY" data-bind="value: offsetY">
-                                    <tr><td><label class="control-label">Мин X</label><td><span data-bind="text: units" /><td><span id="gcodeMinX" data-bind="text: minX" />
-                                    <tr><td><label class="control-label">Макс X</label><td><span data-bind="text: units" /><td><span id="gcodeMaxX" data-bind="text: maxX" />
-                                    <tr><td><label class="control-label">Мин Y</label><td><span data-bind="text: units" /><td><span id="gcodeMinY" data-bind="text: minY" />
-                                    <tr><td><label class="control-label">Макс Y</label><td><span data-bind="text: units" /><td><span id="gcodeMaxY" data-bind="text: maxY" />
+                                    <tr><td><label class="control-label">Мин X</label><td><span data-bind="text: units"></span><td><span id="gcodeMinX" data-bind="text: minX"></span>
+                                    <tr><td><label class="control-label">Макс X</label><td><span data-bind="text: units"></span><td><span id="gcodeMaxX" data-bind="text: maxX"></span>
+                                    <tr><td><label class="control-label">Мин Y</label><td><span data-bind="text: units"></span><td><span id="gcodeMinY" data-bind="text: minY"></span>
+                                    <tr><td><label class="control-label">Макс Y</label><td><span data-bind="text: units"></span><td><span id="gcodeMaxY" data-bind="text: maxY"></span>
                                 </table>
                             </div>
                         </div>
@@ -628,7 +628,7 @@ along with jscut.  If not, see <http://www.gnu.org/licenses/>.
     <script src="lib/gl-matrix-2.2.0-min.js"></script>
     <script src="lib/webgl-utils.js"></script>
     <script src="lib/FileSaver.js"></script>
-    <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="l00gmdr0kh6ke45"></script>
+    <!--<script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="l00gmdr0kh6ke45"></script>-->
     <script src="config.js"></script>
     <script src="js/path.js"></script>
     <script src="js/Cam.js"></script>
