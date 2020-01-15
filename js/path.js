@@ -332,4 +332,10 @@ jscut.priv.path = jscut.priv.path || {};
         //offsetted = ClipperLib.Clipper.CleanPolygons(offsetted, jscut.priv.path.cleanPolyDist);
         return offsetted;
     }
+
+    jscut.priv.path.area = function (paths) {
+        // scale mm2 = slipper / 15503100
+        return ClipperLib.Clipper.Area(paths[0]) / 15503100;
+    }
+
 })();

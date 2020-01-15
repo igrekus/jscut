@@ -284,6 +284,9 @@ function Operation(miscViewModel, options, svgViewModel, materialViewModel, oper
             const magneticConst = Number(mcEl.val());
 
             const out_geom = jscut.priv.cam.coil(geometry, wireGap, loopCount);
+
+            const area = jscut.priv.path.area(geometry);
+
             self.toolPaths(out_geom);
 
             const {length, capacitance, inductance, freq} = self.calcResult(out_geom, wireDiameter, wireGap, dielectricConst, magneticConst);
@@ -292,7 +295,7 @@ function Operation(miscViewModel, options, svgViewModel, materialViewModel, oper
             $('#coilCapacitance').val(capacitance);
             $('#coilInductance').val(inductance);
             $('#coilFreq').val(freq);
-
+            $('#coilArea').val(area);
         }
         else if (self.camOp() == "V Pocket")
             self.toolPaths(jscut.priv.cam.vPocket(geometry, toolModel.angle(), toolCamArgs.passDepthClipper, self.cutDepth.toInch() * jscut.priv.path.inchToClipperScale, toolCamArgs.stepover, self.direction() == "Climb"));
